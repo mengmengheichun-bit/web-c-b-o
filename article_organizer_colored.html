@@ -1,0 +1,201 @@
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-sans); background: #F7F5F0; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 1.5rem; }
+
+  .header { background: #2C2C2A; padding: 1.75rem; margin-bottom: 1.5rem; border-radius: 14px; }
+  .header h1 { font-size: 22px; font-weight: 500; color: #F1EFE8; margin-bottom: 0.25rem; letter-spacing: 0.3px; }
+  .header p { font-size: 13px; color: #888780; }
+
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: 0.25rem; flex-wrap: wrap; }
+  .tab-btn { padding: 0.45rem 1rem; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; transition: all 0.2s; border: 1.5px solid transparent; }
+
+  .tab-science   { background: #E1F5EE; color: #0F6E56; border-color: #9FE1CB; }
+  .tab-health    { background: #FBEAF0; color: #993556; border-color: #F4C0D1; }
+  .tab-economy   { background: #FAEEDA; color: #854F0B; border-color: #FAC775; }
+  .tab-politics  { background: #FCEBEB; color: #A32D2D; border-color: #F7C1C1; }
+  .tab-society   { background: #EEEDFE; color: #534AB7; border-color: #CECBF6; }
+  .tab-education { background: #EAF3DE; color: #3B6D11; border-color: #C0DD97; }
+  .tab-history   { background: #F1EFE8; color: #5F5E5A; border-color: #D3D1C7; }
+  .tab-geography { background: #E6F1FB; color: #185FA5; border-color: #B5D4F4; }
+
+  .tab-btn.active { opacity: 1; filter: none; }
+  .tab-btn:not(.active) { opacity: 0.55; }
+  .tab-btn:hover { opacity: 1; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .add-form { background: #fff; border: 0.5px solid #E0DDD6; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem; }
+  .add-form h3 { font-size: 13px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 1rem; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+  .form-group label { display: block; font-size: 12px; font-weight: 500; color: #888780; margin-bottom: 0.3rem; }
+  .form-group input, .form-group select { width: 100%; padding: 0.5rem 0.75rem; border: 0.5px solid #D3D1C7; border-radius: 8px; font-size: 13px; background: #FAFAF8; color: #2C2C2A; outline: none; }
+  .form-group input:focus, .form-group select:focus { border-color: #9FE1CB; }
+
+  .btn-add { background: #2C2C2A; color: #F1EFE8; border: none; padding: 0.55rem 1.25rem; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+  .btn-add:hover { opacity: 0.85; }
+  .btn-clear { background: transparent; color: #888780; border: 0.5px solid #D3D1C7; padding: 0.55rem 1rem; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  .btn-clear:hover { border-color: #888780; }
+
+  .articles-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .article-card { background: #fff; border: 0.5px solid #E0DDD6; border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .article-card-left { flex: 1; min-width: 0; }
+  .article-card h3 { font-size: 14px; font-weight: 500; color: #2C2C2A; margin-bottom: 0.35rem; line-height: 1.5; word-break: break-word; }
+  .article-card a { font-size: 12px; color: #185FA5; text-decoration: none; word-break: break-all; opacity: 0.8; }
+  .article-card a:hover { text-decoration: underline; opacity: 1; }
+
+  .cat-badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 0.2rem 0.6rem; border-radius: 20px; margin-bottom: 0.4rem; }
+  .badge-science   { background: #E1F5EE; color: #0F6E56; }
+  .badge-health    { background: #FBEAF0; color: #993556; }
+  .badge-economy   { background: #FAEEDA; color: #854F0B; }
+  .badge-politics  { background: #FCEBEB; color: #A32D2D; }
+  .badge-society   { background: #EEEDFE; color: #534AB7; }
+  .badge-education { background: #EAF3DE; color: #3B6D11; }
+  .badge-history   { background: #F1EFE8; color: #5F5E5A; }
+  .badge-geography { background: #E6F1FB; color: #185FA5; }
+
+  .btn-delete { background: transparent; color: #B4B2A9; border: none; padding: 0.3rem; border-radius: 6px; cursor: pointer; font-size: 15px; flex-shrink: 0; transition: color 0.2s; }
+  .btn-delete:hover { color: #E24B4A; }
+
+  .empty-state { text-align: center; padding: 2.5rem 1rem; color: #B4B2A9; font-size: 14px; }
+  .empty-state i { font-size: 28px; margin-bottom: 0.5rem; display: block; opacity: 0.5; }
+</style>
+
+<div class="container">
+  <div class="header">
+    <h1>My Article Collection</h1>
+    <p>Organize articles by topic, read anytime</p>
+  </div>
+
+  <div class="add-form">
+    <h3>Add new article</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Category</label>
+        <select id="categorySelect">
+          <option value="science">Science</option>
+          <option value="health">Health</option>
+          <option value="economy">Economy</option>
+          <option value="politics">Politics</option>
+          <option value="society">Society</option>
+          <option value="education">Education</option>
+          <option value="history">History</option>
+          <option value="geography">Geography</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Article title</label>
+        <input type="text" id="titleInput" placeholder="Enter title here">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom: 1rem;">
+      <label>Link (URL)</label>
+      <input type="text" id="linkInput" placeholder="https://...">
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <button class="btn-add" onclick="addArticle()"><i class="ti ti-plus" aria-hidden="true"></i> Add article</button>
+      <button class="btn-clear" onclick="clearForm()">Clear</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn tab-science active" onclick="switchTab('science', this)">Science</button>
+    <button class="tab-btn tab-health" onclick="switchTab('health', this)">Health</button>
+    <button class="tab-btn tab-economy" onclick="switchTab('economy', this)">Economy</button>
+    <button class="tab-btn tab-politics" onclick="switchTab('politics', this)">Politics</button>
+    <button class="tab-btn tab-society" onclick="switchTab('society', this)">Society</button>
+    <button class="tab-btn tab-education" onclick="switchTab('education', this)">Education</button>
+    <button class="tab-btn tab-history" onclick="switchTab('history', this)">History</button>
+    <button class="tab-btn tab-geography" onclick="switchTab('geography', this)">Geography</button>
+  </div>
+
+  <div id="science" class="tab-content active"><div class="articles-list" id="science-list"></div></div>
+  <div id="health" class="tab-content"><div class="articles-list" id="health-list"></div></div>
+  <div id="economy" class="tab-content"><div class="articles-list" id="economy-list"></div></div>
+  <div id="politics" class="tab-content"><div class="articles-list" id="politics-list"></div></div>
+  <div id="society" class="tab-content"><div class="articles-list" id="society-list"></div></div>
+  <div id="education" class="tab-content"><div class="articles-list" id="education-list"></div></div>
+  <div id="history" class="tab-content"><div class="articles-list" id="history-list"></div></div>
+  <div id="geography" class="tab-content"><div class="articles-list" id="geography-list"></div></div>
+</div>
+
+<script>
+  const categories = ['science','health','economy','politics','society','education','history','geography'];
+
+  function loadArticles() {
+    try { return JSON.parse(localStorage.getItem('articles_v2')) || {}; } catch(e) { return {}; }
+  }
+
+  function saveArticles(articles) {
+    localStorage.setItem('articles_v2', JSON.stringify(articles));
+  }
+
+  function renderArticles() {
+    const articles = loadArticles();
+    categories.forEach(cat => {
+      const list = document.getElementById(`${cat}-list`);
+      list.innerHTML = '';
+      const items = articles[cat] || [];
+      if (items.length === 0) {
+        list.innerHTML = '<div class="empty-state"><i class="ti ti-inbox" aria-hidden="true"></i>No articles yet. Add one above.</div>';
+      } else {
+        items.forEach((article, index) => {
+          const card = document.createElement('div');
+          card.className = 'article-card';
+          card.innerHTML = `
+            <div class="article-card-left">
+              <span class="cat-badge badge-${cat}">${cat.charAt(0).toUpperCase()+cat.slice(1)}</span>
+              <h3>${article.title}</h3>
+              <a href="${article.link}" target="_blank"><i class="ti ti-external-link" aria-hidden="true" style="font-size:11px; vertical-align:-1px; margin-right:3px;"></i>${article.link}</a>
+            </div>
+            <button class="btn-delete" onclick="deleteArticle('${cat}', ${index})" aria-label="Delete article"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          `;
+          list.appendChild(card);
+        });
+      }
+    });
+  }
+
+  function addArticle() {
+    const category = document.getElementById('categorySelect').value;
+    const title = document.getElementById('titleInput').value.trim();
+    const link = document.getElementById('linkInput').value.trim();
+    if (!title || !link) { alert('Please fill in both title and link.'); return; }
+    const articles = loadArticles();
+    if (!articles[category]) articles[category] = [];
+    articles[category].push({ title, link });
+    saveArticles(articles);
+    renderArticles();
+    clearForm();
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(category).classList.add('active');
+    document.querySelector(`.tab-${category}`).classList.add('active');
+  }
+
+  function deleteArticle(category, index) {
+    const articles = loadArticles();
+    articles[category].splice(index, 1);
+    saveArticles(articles);
+    renderArticles();
+  }
+
+  function switchTab(category, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(category).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function clearForm() {
+    document.getElementById('titleInput').value = '';
+    document.getElementById('linkInput').value = '';
+  }
+
+  renderArticles();
+</script>
